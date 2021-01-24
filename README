@@ -7,3 +7,7 @@ Utility to output EPUB into terminal as plaintext. Written in Golang, it does tw
 epubgot # program info
 epubgot programmingingo.epub # list content
 epubgot programmingingo.epub 12 # output chapter
+
+# Build
+Use this one-liner (Must have Golang and Git installed, obviously):
+    $ git clone https://gitlab.com/hvf/epubgot; cd epubgot; go build -o epubgot-build
