@@ -1,0 +1,9 @@
+# About
+Utility to output EPUB into terminal as plaintext. Written in Golang, it does two things:
+- List content: display how many chapters there are to read and how many images you'll miss.
+- Output chapter: unzips EPUBs, selects an HTML file, converts it to plaintext and prints to the terminal.
+
+# Usage
+epubgot # program info
+epubgot programmingingo.epub # list content
+epubgot programmingingo.epub 12 # output chapter
