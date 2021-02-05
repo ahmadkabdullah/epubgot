@@ -33,7 +33,7 @@ func main() {
 	//if no args given
 	switch argsNum {
 	case 1:
-		fmt.Println("EpubGoTerminal: \n\tGo utility to print EPUB chapters into the terminal.")
+		fmt.Println("EpubGoTerm: \n\tGo utility to print EPUB chapters into the terminal.")
 		fmt.Println("Syntax:\n\tepubgot epubfile chapternumber\t# print a chapter in the EPUB\n\tepubgot epubfile\t\t# list chapters of the EPUB and print image count")
 		fmt.Println("Version: 1.3")
 		os.Exit(0)
