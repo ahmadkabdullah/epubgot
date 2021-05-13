@@ -10,4 +10,4 @@ $ epubgot programmingingo.epub 12 # output chapter
 
 # Build
 Use this one-liner (Must have Golang and Git installed, obviously):
-    $ git clone https://gitlab.com/hvf/epubgot; cd epubgot; go build -o epubgot-build
+    $ git clone https://codeberg.org/ahmadhf/epubgot; cd epubgot; go build -o epubgot-build
