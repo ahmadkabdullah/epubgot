@@ -65,6 +65,7 @@ func main() {
 		}
 		//print counters
 		fmt.Println("Chapters:", chpCount, "Images:", imgCount)
+
 	case 3:
 		//make temporary directory
 		tmp, err := ioutil.TempDir(os.TempDir(), "epubgot-book*")
@@ -136,6 +137,7 @@ func main() {
 				}
 			}
 		}
+
 		//if is 0 or more than list
 		if 0 == x || x > uint16(len(list)-1) {
 			panic(fmt.Errorf("(3) number is out of epub's chapter range: %v", x))
@@ -148,12 +150,14 @@ func convertHTMLtoText(fileContent string) string {
 	regexpTags := regexp.MustCompile(`<[^<>]+>`)
 	regexpI := regexp.MustCompile(`&.+;`)
 	regexpComments := regexp.MustCompile(`/*.*/`)
+	regexpBlankLines := regexp.MustCompile(`\n*\n`)
 
 	newContent := fileContent
 
 	// use expressions on string
 	newContent = regexpTags.ReplaceAllString(newContent, "")
 	newContent = regexpI.ReplaceAllString(newContent, " ")
+	newContent = regexpBlankLines.ReplaceAllString(newContent, "\n")
 	newContent = regexpComments.ReplaceAllString(newContent, "")
 
 	return newContent
