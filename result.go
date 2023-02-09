@@ -113,3 +113,75 @@ func printChapter(archv *zip.ReadCloser, wantedChapter int) {
 		panic(fmt.Errorf("(2) chapter number given is likely out of range: %v", wantedChapter))
 	}
 }
+
+// TODO / fix code redundancy
+func printAllChapters(archv *zip.ReadCloser) {
+	//make temporary directory
+	tmp, err := os.MkdirTemp(os.TempDir(), "epubgot-book*")
+	if err != nil {
+		panic(fmt.Errorf("(1) could not create temporary dir: %v", tmp))
+	}
+	defer os.RemoveAll(tmp)
+
+	var chapterNumber = 0
+
+	//range through files and find htmls
+	for _, fileInArchive := range archv.File {
+		//if not html then skip
+		fileExt := filepath.Ext(fileInArchive.Name)
+		if fileExt != ".html" && fileExt != ".xhtml" {
+			continue
+		} else {
+			chapterNumber += 1
+		}
+
+		//set path for the target file
+		targetFilePath := filepath.Join(tmp, fileInArchive.Name)
+
+		//check path for zipslip (https://snyk.io/research/zip-slip-vulnerability)
+		if !strings.HasPrefix(targetFilePath, filepath.Clean(tmp)+string(os.PathSeparator)) {
+			panic(fmt.Errorf("(2) detected illegal file path: %v", targetFilePath))
+		}
+
+		//stat dir of file, make if not exists
+		_, err := os.Stat(filepath.Dir(targetFilePath))
+		if os.IsNotExist(err) {
+			os.MkdirAll(filepath.Dir(targetFilePath), 0777)
+		}
+
+		//open the file
+		fileOpened, err := fileInArchive.Open()
+		if err != nil {
+			panic(fmt.Errorf("(2) failed to open html file of selected chapter: %v", fileInArchive.Name))
+		}
+		defer fileOpened.Close()
+
+		//make new file
+		fileCreated, err := os.Create(targetFilePath)
+		if err != nil {
+			panic(fmt.Errorf("(2) failed to create html file at temporary dir: %v", targetFilePath))
+		}
+		defer fileCreated.Close()
+
+		//copy new file to opened file
+		_, err = io.Copy(fileCreated, fileOpened)
+		if err != nil {
+			panic(fmt.Errorf("(2) failed to copy html file to temporary dir: %v to %v", fileInArchive.Name, targetFilePath))
+		}
+
+		//read selected file
+		htmlFile, err := os.ReadFile(targetFilePath)
+		if err != nil {
+			panic(fmt.Errorf("(3) could not read html file at temporary dir: %v", targetFilePath))
+		}
+
+		// convert to string
+		htmlFileAsString := string(htmlFile)
+
+		convertedText := convertHTMLtoText(htmlFileAsString)
+
+		//print result
+		fmt.Printf("[Chapter: %v]\n", chapterNumber)
+		fmt.Println(convertedText)
+	}
+}
